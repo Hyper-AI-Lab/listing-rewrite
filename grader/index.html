@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Free Etsy &amp; Shopify Listing Grader — Check Your Title, Tags &amp; Description</title>
+  <meta name="description" content="Paste a listing's title, description and tags to get a free 0-100 score and the top fixes: title length, 13 tags, 20-character tag limit, duplicates, and missing details. Runs in your browser.">
+  <style>
+    :root {
+      --bg: #faf9f7; --surface: #ffffff; --text: #1a1a1a; --muted: #5c5c5c;
+      --border: #e6e2dc; --accent: #1f4d3a; --accent-hover: #16382b; --sample-bg: #f3f0eb;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Georgia, "Times New Roman", serif; color: var(--text); background: var(--bg); line-height: 1.55; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    h1, h2 { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 650; letter-spacing: -0.02em; line-height: 1.25; }
+    h1 { font-size: 1.85rem; margin: 0 0 0.75rem; }
+    h2 { font-size: 1.25rem; margin: 2.5rem 0 1rem; }
+    p { margin: 0 0 1rem; color: var(--muted); }
+    .subhead { font-size: 1.1rem; color: var(--muted); margin-bottom: 1.75rem; }
+    label { display: block; font-family: system-ui, sans-serif; font-weight: 600; font-size: 0.9rem; margin: 1rem 0 0.35rem; }
+    label small { font-weight: 400; color: var(--muted); }
+    input, textarea { width: 100%; font: inherit; font-size: 0.95rem; padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }
+    textarea { min-height: 9rem; resize: vertical; }
+    .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-family: system-ui, sans-serif; font-weight: 650; font-size: 1rem; padding: 0.85rem 1.75rem; border-radius: 8px; border: none; cursor: pointer; margin-top: 1.25rem; }
+    .btn:hover { background: var(--accent-hover); }
+    .score { font-family: system-ui, sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1; margin: 0 0 1rem; }
+    .score span { font-size: 1rem; font-weight: 500; color: var(--muted); }
+    .fixes { background: var(--sample-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1rem 1rem 2.25rem; margin: 0 0 1.25rem; }
+    .fixes li { margin-bottom: 0.4rem; }
+    .checks { list-style: none; padding: 0; margin: 0; }
+    .checks li { padding: 0.55rem 0 0.55rem 3.5rem; border-bottom: 1px solid var(--border); color: var(--muted); position: relative; font-size: 0.95rem; }
+    .checks li:last-child { border-bottom: none; }
+    .checks b { color: var(--text); font-family: system-ui, sans-serif; font-size: 0.9rem; }
+    .checks .pts { position: absolute; left: 0; top: 0.6rem; font-family: system-ui, sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--accent); }
+    .checks .bad .pts { color: #a23b2a; }
+    .price-box { background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 2rem; }
+    .price-box h2 { margin: 0 0 0.5rem; }
+    .price-box .btn { margin-top: 0.5rem; }
+    .alt { font-family: system-ui, sans-serif; font-size: 0.9rem; margin: 0.9rem 0 0; }
+    a { color: var(--accent); }
+    .note { font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--muted); }
+    footer { margin-top: 2rem; font-family: system-ui, sans-serif; font-size: 0.75rem; color: #999; text-align: center; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Free Etsy &amp; Shopify listing grader</h1>
+    <p class="subhead">Paste one listing's title, description and tags. Get a 0–100 score and the top fixes in seconds.</p>
+    <p class="note">Everything runs in your browser. Nothing you paste is sent or saved anywhere.</p>
+
+    <form id="f">
+      <label for="title">Title</label>
+      <input id="title" maxlength="300" placeholder="e.g. Mini Stoneware Bud Vase, Drippy Glaze | Handmade">
+      <label for="desc">Description</label>
+      <textarea id="desc" placeholder="Paste the full description"></textarea>
+      <label for="tags">Tags <small>(comma-separated)</small></label>
+      <input id="tags" placeholder="e.g. bud vase, stoneware vase, small flower vase">
+      <button class="btn" type="submit">Grade my listing</button>
+    </form>
+
+    <section id="out" hidden>
+      <h2>Your score</h2>
+      <p class="score" id="score"></p>
+      <h2>Top fixes</h2>
+      <ol class="fixes" id="fixes"></ol>
+      <h2>Full checklist</h2>
+      <ul class="checks" id="checks"></ul>
+
+      <div class="price-box">
+        <h2>Want this done for you?</h2>
+        <p>3 listings rewritten for $9, back in 48 hours: new titles, descriptions and tags. One free revision.</p>
+        <a class="btn" href="https://buy.stripe.com/bJe7sDgPo4foeoOfof9R601?utm_source=grader&amp;utm_medium=web&amp;utm_campaign=e2">Get 3 listings rewritten — $9</a>
+        <p class="alt">Bigger shop? <a href="https://buy.stripe.com/cNiaEP9mW13ceoO1xp9R600?utm_source=grader&amp;utm_medium=web&amp;utm_campaign=e2">10 listings for $29</a></p>
+      </div>
+    </section>
+
+    <h2>What it checks</h2>
+    <p>Title length (Etsy allows up to 140 characters), stock codes in the title, whether the title opens with the product, how many of Etsy's 13 tags you use, tags over Etsy's 20-character limit, near-duplicate tags, description length, whether the first sentence describes the item, size, material and care details, and ALL-CAPS titles.</p>
+    <p class="note">These are plain rules of thumb based on Etsy's published limits and common listing advice, not a model of Etsy's or Shopify's search ranking. Tag limits follow Etsy; Shopify tags work differently. Spelling isn't checked.</p>
+
+    <p><a href="../">← Listing Rewrite Pack</a> · Questions? <a href="mailto:kirill@hyperailab.com">kirill@hyperailab.com</a></p>
+    <footer>Listing Rewrite Pack · Independent service for small Etsy &amp; Shopify sellers</footer>
+  </main>
+  <script src="grade.js"></script>
+  <script>
+    document.getElementById("f").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var r = window.gradeListing({
+        title: document.getElementById("title").value,
+        description: document.getElementById("desc").value,
+        tags: document.getElementById("tags").value
+      });
+      document.getElementById("score").innerHTML = r.score + " <span>/ 100</span>";
+      var fixes = document.getElementById("fixes"), checks = document.getElementById("checks");
+      fixes.textContent = ""; checks.textContent = "";
+      (r.fixes.length ? r.fixes : ["Nothing major to fix. Nice listing."]).forEach(function (t) {
+        var li = document.createElement("li"); li.textContent = t; fixes.appendChild(li);
+      });
+      r.checks.forEach(function (c) {
+        var li = document.createElement("li");
+        if (c.points < c.max || c.points < 0) li.className = "bad";
+        var pts = document.createElement("span"); pts.className = "pts"; pts.textContent = c.points + "/" + c.max;
+        var b = document.createElement("b"); b.textContent = c.name;
+        li.appendChild(pts); li.appendChild(b); li.appendChild(document.createTextNode(" — " + c.msg));
+        checks.appendChild(li);
+      });
+      var out = document.getElementById("out"); out.hidden = false; out.scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>
