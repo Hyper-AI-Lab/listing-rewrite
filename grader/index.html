@@ -77,15 +77,21 @@
 
     <h2>What it checks</h2>
     <p>Title length (Etsy allows up to 140 characters), stock codes in the title, whether the title opens with the product, how many of Etsy's 13 tags you use, tags over Etsy's 20-character limit, near-duplicate tags, description length, whether the first sentence describes the item, size, material and care details, and ALL-CAPS titles.</p>
-    <p class="note">These are plain rules of thumb based on Etsy's published limits and common listing advice, not a model of Etsy's or Shopify's search ranking. Tag limits follow Etsy; Shopify tags work differently. Spelling isn't checked.</p>
+    <p class="note">These are plain rules of thumb based on Etsy's published limits and common listing advice, not a model of Etsy's or Shopify's search ranking. Tag limits follow Etsy; Shopify tags work differently. Spelling isn't checked. Your listing text never leaves your browser; we only count visits and grades per link source, with no cookies.</p>
 
     <p><a href="../">← Listing Rewrite Pack</a> · Questions? <a href="mailto:kirill@hyperailab.com">kirill@hyperailab.com</a></p>
     <footer>Listing Rewrite Pack · Independent service for small Etsy &amp; Shopify sellers</footer>
   </main>
   <script src="grade.js"></script>
   <script>
+    // Anonymous per-channel counts (no cookies, no personal data): visits and grades by ?utm_source.
+    var src = ((new URLSearchParams(location.search).get("utm_source") || "direct").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 20)) || "direct";
+    function count(kind) { fetch("https://abacus.jasoncameron.dev/hit/hyperailab-lr/" + kind + "-" + src).catch(function () {}); }
+    count("visit");
+    document.querySelectorAll('a[href^="https://buy.stripe.com/"]').forEach(function (a) { a.href += "&utm_content=" + src; });
     document.getElementById("f").addEventListener("submit", function (e) {
       e.preventDefault();
+      count("grade");
       var r = window.gradeListing({
         title: document.getElementById("title").value,
         description: document.getElementById("desc").value,
